@@ -29,7 +29,7 @@ function home(){
                   <td>${data1[i].age}</td>
                   <td>${data1[i].salary}</td>
                   <td>${data1[i].department.departName}</td>
-                  <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeForm">Update</button></td>
+                  <td><button onclick="employeeData(${data1[i].id})" type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeForm">Update</button></td>
                   <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteMessage">Delete</button></td>
                 </tr>`
             }
@@ -125,7 +125,7 @@ function home(){
                       </div>
                       <div class="form-group">
                         <label for="exampleInput1">Department</label>
-                        <select class="custom-select">
+                        <select class="custom-select" id="departUpdate">
                           <option selected>Open this select menu</option>`
 
                 for (let i = 0; i < data.length; i++) {
@@ -187,7 +187,44 @@ function saveNewEmployee(){
                 id: document.getElementById("department").value
             }
         }).then(() => {
-            reloadPage()
+            // Cú pháp đóng hộp thoại modal sau khi ấn nút save để thêm mới employee
+            $("#addEmployeeForm").modal("hide");
+            // Gọi lại hàm hiển thị list
+            home()
+    })
+}
+
+// Hàm function này sẽ lấy thông tin employee trả về từ res.data và đưa giá trị vào ô input
+function employeeData(id){
+    // Đóng tất cả các hộp thoại modal khác trước
+    $("#addEmployeeForm").modal("hide");
+    $("#deleteMessage").modal("hide");
+    // Tìm employee theo id
+    axios.get("http://localhost:8081/employees" + '/' + id).then(res => {
+        // console.log(res.data)
+        // Khi modal đã hiển thị hoàn toàn, sự kiện shown.bs.modal sẽ đc kích hoạt, thông tin đc đẩy vào input
+        $('#editEmployeeForm').on('shown.bs.modal', function () {
+            document.getElementById('employeeCode').value = res.data.employeeCode;
+        });
+
+        $('#editEmployeeForm').on('shown.bs.modal', function () {
+            document.getElementById('employeeName').value = res.data.name;
+        });
+
+        $('#editEmployeeForm').on('shown.bs.modal', function () {
+            document.getElementById('age').value = res.data.age;
+        });
+
+        $('#editEmployeeForm').on('shown.bs.modal', function () {
+            document.getElementById('salary').value = res.data.salary;
+        });
+
+        $('#editEmployeeForm').on('shown.bs.modal', function () {
+            document.getElementById('departUpdate').value = res.data.department.departName;
+        });
+
+        // Hiển thị modal
+        $('#editEmployeeForm').modal('show');
     })
 }
 

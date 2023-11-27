@@ -28,11 +28,12 @@ public class APIEmployeeController {
     }
 
     @GetMapping("/{id}")
-    //Hàm này để lấy ra 1 đối tượng employee có id tương ứng đã có trong bảng CSDL
     public ResponseEntity<Employee> findEmployeeById(@PathVariable Long id){
         Optional<Employee> employeeOptional = employeeService.findById(id);
-        return employeeOptional.map(employee -> new ResponseEntity<>(employee, HttpStatus.OK)).orElseGet(() ->
-                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (!employeeOptional.isPresent()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(employeeOptional.get(), HttpStatus.OK);
     }
 
     @PostMapping
