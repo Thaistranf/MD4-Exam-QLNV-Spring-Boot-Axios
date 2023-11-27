@@ -27,6 +27,14 @@ public class APIEmployeeController {
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    //Hàm này để lấy ra 1 đối tượng employee có id tương ứng đã có trong bảng CSDL
+    public ResponseEntity<Employee> findEmployeeById(@PathVariable Long id){
+        Optional<Employee> employeeOptional = employeeService.findById(id);
+        return employeeOptional.map(employee -> new ResponseEntity<>(employee, HttpStatus.OK)).orElseGet(() ->
+                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PostMapping
     public ResponseEntity<Employee> save(@RequestBody Employee employee){
         return new ResponseEntity<>(employeeService.save(employee), HttpStatus.CREATED);
