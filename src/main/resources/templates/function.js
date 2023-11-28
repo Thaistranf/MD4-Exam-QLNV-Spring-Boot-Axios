@@ -25,12 +25,12 @@ function home(){
                 str += `
                 <tr>
                   <td>${data1[i].employeeCode}</td>
-                  <td><a href="">${data1[i].name}</a></td>
+                  <td><a onclick="viewEmployee(${data1[i].id})" href="http://localhost:63342/Exam-MD4-Employee-Management/src/main/resources/templates/view.html?_ijt=pdpejhngbg1hqc2308vt5pi9kp&_ij_reload=RELOAD_ON_SAVE" >${data1[i].name}</a></td>
                   <td>${data1[i].age}</td>
                   <td>${data1[i].salary}</td>
                   <td>${data1[i].department.departName}</td>
                   <td><button onclick="employeeData(${data1[i].id})" type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeForm">Update</button></td>
-                  <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteMessage">Delete</button></td>
+                  <td><button onclick="messageDelete(${data1[i].id})" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteMessage">Delete</button></td>
                 </tr>`
             }
             str += `
@@ -76,8 +76,7 @@ function home(){
 
             for (let i = 0; i < data.length; i++) {
                 str += `
-                <option value="${data[i].id}">${data[i].departName}</option>
-            `
+                <option value="${data[i].id}">${data[i].departName}</option>`
             }
             str += `
                       </select>
@@ -106,22 +105,23 @@ function home(){
                     </button>
                   </div>              
                   <!--Modal body-->
-                  <div class="modal-body">               
+                  <div class="modal-body">                  
+                      <input type="hidden" class="form-control" id="employeeIdUp" aria-describedby="emailHelp">                         
                       <div class="form-group">
                         <label for="exampleInput1">Employee Code</label>
-                        <input type="text" class="form-control" id="employeeCode" aria-describedby="emailHelp">            
+                        <input type="text" class="form-control" id="employeeCodeUp" aria-describedby="emailHelp">            
                       </div>
                       <div class="form-group">
                         <label for="exampleInput1">Name</label>
-                        <input type="text" class="form-control" id="employeeName" aria-describedby="emailHelp">
+                        <input type="text" class="form-control" id="employeeNameUp" aria-describedby="emailHelp">
                       </div>
                       <div class="form-group">
                         <label for="exampleInput1">Age</label>
-                        <input type="text" class="form-control" id="age" aria-describedby="emailHelp">
+                        <input type="text" class="form-control" id="ageUp" aria-describedby="emailHelp">
                       </div>
                       <div class="form-group">
                         <label for="exampleInput1">Salary</label>
-                        <input type="text" class="form-control" id="salary" aria-describedby="emailHelp">
+                        <input type="text" class="form-control" id="salaryUp" aria-describedby="emailHelp">
                       </div>
                       <div class="form-group">
                         <label for="exampleInput1">Department</label>
@@ -161,6 +161,7 @@ function home(){
                   </div>
                   <!--Modal body-->
                   <div class="modal-body">
+                    <input type="hidden" class="form-control" id="employeeIdDelete" aria-describedby="emailHelp">
                     <p>Are you sure you want to delete this employee?</p>
                   </div>
                   <!--Modal footer-->
@@ -190,7 +191,7 @@ function saveNewEmployee(){
             // Cú pháp đóng hộp thoại modal sau khi ấn nút save để thêm mới employee
             $("#addEmployeeForm").modal("hide");
             // Gọi lại hàm hiển thị list
-            home()
+            home();
     })
 }
 
@@ -204,34 +205,90 @@ function employeeData(id){
         // console.log(res.data)
         // Khi modal đã hiển thị hoàn toàn, sự kiện shown.bs.modal sẽ đc kích hoạt, thông tin đc đẩy vào input
         $('#editEmployeeForm').on('shown.bs.modal', function () {
-            document.getElementById('employeeCode').value = res.data.employeeCode;
+            document.getElementById('employeeIdUp').value = res.data.id;
         });
-
         $('#editEmployeeForm').on('shown.bs.modal', function () {
-            document.getElementById('employeeName').value = res.data.name;
+            document.getElementById('employeeCodeUp').value = res.data.employeeCode;
         });
-
         $('#editEmployeeForm').on('shown.bs.modal', function () {
-            document.getElementById('age').value = res.data.age;
+            document.getElementById('employeeNameUp').value = res.data.name;
         });
-
         $('#editEmployeeForm').on('shown.bs.modal', function () {
-            document.getElementById('salary').value = res.data.salary;
+            document.getElementById('ageUp').value = res.data.age;
         });
-
         $('#editEmployeeForm').on('shown.bs.modal', function () {
-            document.getElementById('departUpdate').value = res.data.department.departName;
+            document.getElementById('salaryUp').value = res.data.salary;
         });
-
+        $('#editEmployeeForm').on('shown.bs.modal', function () {
+            document.getElementById('departUpdate').value = res.data.department.id;
+        });
         // Hiển thị modal
         $('#editEmployeeForm').modal('show');
     })
 }
 
 function saveEmployee(){
-    axios.put()
+    let id = document.getElementById("employeeIdUp").value
+    axios.put("http://localhost:8081/employees" + '/' + id,
+        {
+            employeeCode: document.getElementById("employeeCodeUp").value,
+            name: document.getElementById("employeeNameUp").value,
+            age: document.getElementById("ageUp").value,
+            salary: document.getElementById("salaryUp").value,
+            department: {
+                id: document.getElementById("departUpdate").value
+            }
+        }).then(() => {
+        // Cú pháp đóng hộp thoại modal sau khi ấn nút save để thêm mới employee
+        $("#editEmployeeForm").modal("hide");
+        // Gọi lại hàm hiển thị list
+        home();
+    })
 }
 
-function reloadPage(){
-    location.reload()
+//Tạo 1 biến "employeeID" để hứng giá trị của id
+let employeeID
+
+//Khi click nút Delete ở table -> hàm "messageDelete" đc gọi ra trước -> lúc này biến "employeeID" mới nhận đc giá trị id
+function messageDelete(id){
+    employeeID = id;
 }
+
+//Dùng biến "employeeID" làm id cho hàm "deleteEmployee"
+function deleteEmployee(){
+    axios.delete("http://localhost:8081/employees" + '/' + employeeID).then(() => {
+        // Cú pháp đóng hộp thoại modal sau khi ấn nút save để thêm mới employee
+        $("#deleteMessage").modal("hide");
+        // Gọi lại hàm hiển thị list
+        home();
+    })
+}
+
+function viewEmployee(id){
+    axios.get("http://localhost:8081/employees" + '/' + id).then(res => {
+        // console.log(res.data)
+        localStorage.setItem("viewName", res.data.name)
+        localStorage.setItem("viewSalary", res.data.salary)
+        localStorage.setItem("viewAge", res.data.age)
+        localStorage.setItem("viewDepartment", res.data.department.departName)
+        // document.getElementById("viewName").value = viewName
+        // document.getElementById("viewSalary").innerHTML = res.data.salary
+        // document.getElementById("viewAge").innerHTML = res.data.age
+        // document.getElementById("viewDepartment").innerHTML = res.data.department.id
+
+        document.getElementById("view").innerHTML = `
+            <label>Name: </label>
+            <label>localStorage.getItem("viewName")</label><br>
+            <label>Salary: </label>
+            <label>${res.data.salary}</label><br>
+            <label>Age: </label>
+            <label>${res.data.age}</label><br>
+            <label>Department: </label>
+            <label>${res.data.department.departName}</label>
+        `
+    })
+}
+
+// function reloadPage(){
+//     location.reload()
+// }
