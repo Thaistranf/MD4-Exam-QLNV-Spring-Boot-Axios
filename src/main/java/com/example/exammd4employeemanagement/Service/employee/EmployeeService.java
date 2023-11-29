@@ -29,4 +29,14 @@ public class EmployeeService implements IEmployeeService{
     public void delete(Long id) {
         employeeRepository.deleteById(id);
     }
+
+    @Override
+    public Iterable<Employee> sortIncreasing() {
+        return employeeRepository.sortIncreasing();
+    }
+
+    @Override
+    public Iterable<Employee> sortDecreasing() {
+        return employeeRepository.sortDecreasing();
+    }
 }

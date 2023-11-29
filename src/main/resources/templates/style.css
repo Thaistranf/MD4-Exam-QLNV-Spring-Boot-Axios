@@ -1,0 +1,29 @@
+/* Thêm CSS để tùy chỉnh giao diện dropdown */
+.icon-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.icon-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.icon-dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.icon-dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.icon-dropdown:hover .icon-dropdown-content {
+    display: block;
+}

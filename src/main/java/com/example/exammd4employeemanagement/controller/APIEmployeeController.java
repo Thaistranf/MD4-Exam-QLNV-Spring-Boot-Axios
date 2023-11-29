@@ -36,6 +36,26 @@ public class APIEmployeeController {
         return new ResponseEntity<>(employeeOptional.get(), HttpStatus.OK);
     }
 
+    @GetMapping("/sortIn")
+    //List employee theo tuổi tăng dần
+    public ResponseEntity<Iterable<Employee>> sortInList(){
+        List<Employee> employees = (List<Employee>) employeeService.sortIncreasing();
+        if (employees.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+
+    @GetMapping("/sortDec")
+    //List employee theo tuổi giảm dần
+    public ResponseEntity<Iterable<Employee>> sortDecList(){
+        List<Employee> employees = (List<Employee>) employeeService.sortDecreasing();
+        if (employees.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Employee> save(@RequestBody Employee employee){
         return new ResponseEntity<>(employeeService.save(employee), HttpStatus.CREATED);

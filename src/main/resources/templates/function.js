@@ -9,12 +9,34 @@ function home(){
 
             //List employee
             let str = `
+            <div class="row">
+                <div class="col-2">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addEmployeeForm">Add New</button>
+                </div>
+                <div class="col-7"></div>
+                <div class="col-3">
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!--List employee-->
             <table class="table table-striped">
               <thead>
                 <tr>
                   <th scope="col">EmployeeCode</th>
                   <th scope="col">Name</th>
-                  <th scope="col">Age</th>
+                  <th scope="col">Age
+                        <div class="icon-dropdown">
+                            <i class="fas fa-caret-down"></i>
+                            <div class="icon-dropdown-content">
+                                <button class="dropdown-item" type="button" onclick="ascending()">Ascending</button>
+                                <button class="dropdown-item" type="button" onclick="decreasing()">Decreasing</button>
+                            </div>
+                        </div>
+                  </th>
                   <th scope="col">Salary</th>
                   <th scope="col">Department</th>
                   <th scope="col" colspan="2">Action</th>
@@ -25,7 +47,7 @@ function home(){
                 str += `
                 <tr>
                   <td>${data1[i].employeeCode}</td>
-                  <td><a onclick="viewEmployee(${data1[i].id})" href="http://localhost:63342/Exam-MD4-Employee-Management/src/main/resources/templates/view.html?_ijt=pdpejhngbg1hqc2308vt5pi9kp&_ij_reload=RELOAD_ON_SAVE" >${data1[i].name}</a></td>
+                  <td><a href="#" onclick="viewEmployee(${data1[i].id})">${data1[i].name}</a></td>
                   <td>${data1[i].age}</td>
                   <td>${data1[i].salary}</td>
                   <td>${data1[i].department.departName}</td>
@@ -266,26 +288,104 @@ function deleteEmployee(){
 
 function viewEmployee(id){
     axios.get("http://localhost:8081/employees" + '/' + id).then(res => {
-        // console.log(res.data)
-        localStorage.setItem("viewName", res.data.name)
-        localStorage.setItem("viewSalary", res.data.salary)
-        localStorage.setItem("viewAge", res.data.age)
-        localStorage.setItem("viewDepartment", res.data.department.departName)
-        // document.getElementById("viewName").value = viewName
-        // document.getElementById("viewSalary").innerHTML = res.data.salary
-        // document.getElementById("viewAge").innerHTML = res.data.age
-        // document.getElementById("viewDepartment").innerHTML = res.data.department.id
-
-        document.getElementById("view").innerHTML = `
+        document.getElementById("body").innerHTML = `
+            <h1>Employee Detail</h1>
+            <label>Employee Code: </label>
+            <label>${res.data.employeeCode}</label><br>
             <label>Name: </label>
-            <label>localStorage.getItem("viewName")</label><br>
-            <label>Salary: </label>
-            <label>${res.data.salary}</label><br>
+            <label>${res.data.name}</label><br>
             <label>Age: </label>
             <label>${res.data.age}</label><br>
+            <label>Salary: </label>
+            <label>${res.data.salary}</label><br>
             <label>Department: </label>
-            <label>${res.data.department.departName}</label>
+            <label>${res.data.department.departName}</label><br>
+            <a href="http://localhost:63342/Exam-MD4-Employee-Management/src/main/resources/templates/home.html?_ijt=8kl43451pjh9vtn8c09nqs4cgf&_ij_reload=RELOAD_ON_SAVE">Back to list</a>
         `
+    })
+}
+
+function ascending(){
+    axios.get("http://localhost:8081/employees/sortIn").then(res => {
+        let data2 = res.data;
+        //List employee tăng dần tuổi
+        let str = `
+            <h1>List of employees by age in increasing order</h1>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">EmployeeCode</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Age
+                        <div class="icon-dropdown">
+                            <i class="fas fa-caret-down"></i>
+                            <div class="icon-dropdown-content">
+                                <button class="dropdown-item" type="button" onclick="ascending()">Ascending</button>
+                                <button class="dropdown-item" type="button" onclick="decreasing()">Decreasing</button>
+                            </div>
+                        </div>
+                  </th>
+                  <th scope="col">Salary</th>
+                  <th scope="col">Department</th>
+                </tr>
+              </thead>
+              <tbody>`;
+        for (let i = 0; i < data2.length; i++) {
+            str += `
+                <tr>
+                  <td>${data2[i].employeeCode}</td>
+                  <td><a href="#" onclick="viewEmployee(${data2[i].id})">${data2[i].name}</a></td>
+                  <td>${data2[i].age}</td>
+                  <td>${data2[i].salary}</td>
+                  <td>${data2[i].department.departName}</td>                
+                </tr>`
+        }
+        str += `
+                </tbody>
+        </table>`
+        document.getElementById("body").innerHTML = str;
+    })
+}
+
+function decreasing(){
+    axios.get("http://localhost:8081/employees/sortDec").then(res => {
+        let data3 = res.data;
+        //List employee tăng giảm tuổi
+        let str = `
+            <h1>List of employees by age descends</h1>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">EmployeeCode</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Age
+                        <div class="icon-dropdown">
+                            <i class="fas fa-caret-down"></i>
+                            <div class="icon-dropdown-content">
+                                <button class="dropdown-item" type="button" onclick="ascending()">Ascending</button>
+                                <button class="dropdown-item" type="button" onclick="decreasing()">Decreasing</button>
+                            </div>
+                        </div>
+                  </th>
+                  <th scope="col">Salary</th>
+                  <th scope="col">Department</th>
+                </tr>
+              </thead>
+              <tbody>`;
+        for (let i = 0; i < data3.length; i++) {
+            str += `
+                <tr>
+                  <td>${data3[i].employeeCode}</td>
+                  <td><a href="#" onclick="viewEmployee(${data3[i].id})">${data3[i].name}</a></td>
+                  <td>${data3[i].age}</td>
+                  <td>${data3[i].salary}</td>
+                  <td>${data3[i].department.departName}</td>                
+                </tr>`
+        }
+        str += `
+                </tbody>
+        </table>`
+        document.getElementById("body").innerHTML = str;
     })
 }
 
