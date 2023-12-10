@@ -78,4 +78,13 @@ public class APIEmployeeController {
         employeeService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Iterable<Employee>> search(@RequestParam("employeeName") String name){
+        List<Employee> employees = (List<Employee>) employeeService.search(name);
+        if (employees.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
 }

@@ -39,4 +39,9 @@ public class EmployeeService implements IEmployeeService{
     public Iterable<Employee> sortDecreasing() {
         return employeeRepository.sortDecreasing();
     }
+
+    @Override
+    public Iterable<Employee> search(String name) {
+        return employeeRepository.findByNameContainingIgnoreCase(name);
+    }
 }

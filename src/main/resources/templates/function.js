@@ -16,8 +16,8 @@ function home(){
                 <div class="col-7"></div>
                 <div class="col-3">
                     <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        <input class="form-control mr-sm-2" type="search" id="inputSearch" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="searchData()">Search</button>
                     </form>
                 </div>
             </div>
@@ -348,7 +348,7 @@ function ascending(){
 }
 
 function decreasing(){
-    axios.get("http://localhost:8081/employees/sortDec").then(res => {
+    axios.get(`http://localhost:8081/employees/sortDec`).then(res => {
         let data3 = res.data;
         //List employee tăng giảm tuổi
         let str = `
@@ -385,6 +385,70 @@ function decreasing(){
         str += `
                 </tbody>
         </table>`
+        document.getElementById("body").innerHTML = str;
+    })
+}
+
+function searchData(){
+    let employeeName = document.getElementById("inputSearch").value
+    axios.get("http://localhost:8081/employees/search", {
+        name: employeeName
+    }).then(res => {
+        let listSearchData = res.data
+        console.log(listSearchData)
+
+        //List employee
+        let str = `
+<!--            <div class="row">-->
+<!--                <div class="col-2">-->
+<!--                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addEmployeeForm">Add New</button>-->
+<!--                </div>-->
+<!--                <div class="col-7"></div>-->
+<!--                <div class="col-3">-->
+<!--                    <form class="form-inline my-2 my-lg-0">-->
+<!--                        <input class="form-control mr-sm-2" type="search" id="inputSearch" placeholder="Search" aria-label="Search">-->
+<!--                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="searchData()">Search</button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+            
+            <!--List employee-->
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">EmployeeCode</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Age
+                        <div class="icon-dropdown">
+                            <i class="fas fa-caret-down"></i>
+                            <div class="icon-dropdown-content">
+                                <button class="dropdown-item" type="button" onclick="ascending()">Ascending</button>
+                                <button class="dropdown-item" type="button" onclick="decreasing()">Decreasing</button>
+                            </div>
+                        </div>
+                  </th>
+                  <th scope="col">Salary</th>
+                  <th scope="col">Department</th>
+                  <th scope="col" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>`;
+        for (let i = 0; i < listSearchData.length; i++) {
+            str += `
+                <tr>
+                  <td>${listSearchData[i].employeeCode}</td>
+                  <td><a href="#" onclick="viewEmployee(${listSearchData[i].id})">${listSearchData[i].name}</a></td>
+                  <td>${listSearchData[i].age}</td>
+                  <td>${listSearchData[i].salary}</td>
+                  <td>${listSearchData[i].department.departName}</td>
+                  <td><button onclick="employeeData(${listSearchData[i].id})" type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeForm">Update</button></td>
+                  <td><button onclick="messageDelete(${listSearchData[i].id})" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteMessage">Delete</button></td>
+                </tr>`
+        }
+        str += `
+                </tbody>
+        </table>`
+        // console.log(str)
         document.getElementById("body").innerHTML = str;
     })
 }
